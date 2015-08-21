@@ -60,14 +60,18 @@ class MainServer(asyncio.Protocol):
         print('Connection from {}'.format(peername))
         self.transport = transport
 
+    def connection_lost(self,exc):
+        print('Close the client socket')
+        self.transport.close()
+
     def data_received(self, data):
+        print(data)
         message = data.decode()
         res=self.inputHandler(message)
         print('Data received: {!r}'.format(message))
         #self.transport.write(data)
         self.transport.write(res)
-        print('Close the client socket')
-        self.transport.close()
+
 
 loop = asyncio.get_event_loop()
 # Each client connection will create a new protocol instance

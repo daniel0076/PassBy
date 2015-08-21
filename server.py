@@ -10,32 +10,47 @@ class MainServer(asyncio.Protocol):
         self.conn = pymysql.connect(unix_socket="/run/mysqld/mysqld.sock", user='passby', passwd='howbangbang', db='passby')
         self.cur = self.conn.cursor()
 
-    def searchNear(self,BT_Addr):
+    def Connect(self,BT_Addr):
         self.cur.execute("SELECT * FROM `users` WHERE `BT_Addr`=%s",(BT_Addr,))
         result=self.cur.fetchone()
         if result is None:
-            response={'type':'conn_respond','success':'false'}
+            response={'type':'conn_response','success':'false'}
         else:
-            response={'type':'conn_respond','success':'true'}
+            response={'type':'conn_response','success':'true'}
         response=json.dumps(response)
         return response.encode()
 
     def Register(self,request):
-        succ_msg=json.dumps({'type':'register','success':'true'})
-        fail_msg=json.dumps({'type':'register','success':'false'})
+        succ_msg=json.dumps({'type':'register_response','success':'true'})
+        fail_msg=json.dumps({'type':'register_response','success':'false'})
         try:
             self.cur.execute("INSERT INTO `users` (BT_Addr,name,identity,fb,line_id,ig,twitter) VALUES (%s,%s,%s,%s,%s,%s,%s)",(request.get('BT_Addr'),request.get('name'),request.get('identity'),request.get('fb'),request.get('line_id'),request.get('ig'),request.get('twitter'),))
             self.conn.commit()
+            print('Register Succeed')
             return succ_msg.encode()
-        except pymysql.err.IntegrityError:
+        except:
+            print('Register Failed')
             return fail_msg.encode()
+
+    def Query(self,BT_Addr):
+        self.cur.execute("SELECT * FROM `users` WHERE `BT_Addr`=%s",(BT_Addr,))
+        result=self.cur.fetchone()
+        if result is None:
+            response={'type':'query_response','success':'false'}
+        else:
+            response=result
+        response=json.dumps(response)
+        return response.encode()
+
 
     def inputHandler(self,json_request):
         request=json.loads(json_request)
         if request['type'] == 'conn':
-            return self.searchNear(request['mac'])
+            return self.Connect(request['mac'])
         elif request['type'] == 'register':
             return self.Register(request)
+        elif request['type'] == 'query':
+            return self.Query(request['mac'])
         else:
             print('resuest=',request['type'])
             return None

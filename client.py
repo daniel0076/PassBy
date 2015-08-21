@@ -13,7 +13,7 @@ sock=socket.socket()
 sock.connect(addr)
 
 for k,v in tests.items():
-    print("testing:{}\n".format(k))
+    print("testing:{}".format(k))
     sock.send(json.dumps(v).encode())
     print("result:{}\n".format(sock.recv(200)))
 print("end of test")

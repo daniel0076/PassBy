@@ -74,6 +74,7 @@ class MainServer(asyncio.Protocol):
         message = data.decode()
         res=self.inputHandler(message)
         print('Data received: {!r}'.format(message))
+        self.transport.write(res)
 
 
 loop = asyncio.get_event_loop()

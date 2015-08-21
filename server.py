@@ -37,23 +37,29 @@ class MainServer(asyncio.Protocol):
         result=self.cur.fetchone()
         if result is None:
             response={'type':'query_response','success':'false'}
+            print("{} not found".format(BT_Addr))
         else:
             response=result
         response=json.dumps(response)
         return response.encode()
 
-
     def inputHandler(self,json_request):
-        request=json.loads(json_request)
-        if request['type'] == 'conn':
-            return self.Connect(request['mac'])
-        elif request['type'] == 'register':
-            return self.Register(request)
-        elif request['type'] == 'query':
-            return self.Query(request['mac'])
-        else:
-            print('resuest=',request['type'])
-            return None
+        try:
+            request=json.loads(json_request)
+            if request['type'] == 'conn':
+                return self.Connect(request['mac'])
+            elif request['type'] == 'register':
+                return self.Register(request)
+            elif request['type'] == 'query':
+                return self.Query(request['mac'])
+            else:
+                print('resuest=',request['type'])
+                return None
+        except:
+            print("input {} parse error, reparse".format(json_request.split('\n')))
+            for item in json_request.split('\n')[:-1]:
+                self.inputHandler(item)
+            return
 
     def connection_made(self, transport):
         peername = transport.get_extra_info('peername')
@@ -65,12 +71,9 @@ class MainServer(asyncio.Protocol):
         self.transport.close()
 
     def data_received(self, data):
-        print(data)
         message = data.decode()
         res=self.inputHandler(message)
         print('Data received: {!r}'.format(message))
-        #self.transport.write(data)
-        self.transport.write(res)
 
 
 loop = asyncio.get_event_loop()

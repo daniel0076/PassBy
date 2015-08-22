@@ -174,11 +174,13 @@ class MainServer(asyncio.Protocol):
         self.transport.close()
 
     def data_received(self, data):
-        message = data.decode()
-        print('Data received: {!r}'.format(message))
-        res=self.inputHandler(message)
-        self.transport.write(res)
-
+        try:
+            message = data.decode()
+            print('Data received: {!r}'.format(message))
+            res=self.inputHandler(message)
+            self.transport.write(res)
+        except UnicodeDecodeError:
+            self.transport.close()
 
 loop = asyncio.get_event_loop()
 # Each client connection will create a new protocol instance

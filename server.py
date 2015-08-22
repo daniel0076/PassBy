@@ -67,6 +67,7 @@ class MainServer(asyncio.Protocol):
             result=self.cur.fetchall()
             succ_response['tags']=result
             succ_response=json.dumps(succ_response)
+            print("Tags retrieved")
             return succ_response.encode()
         except:
             print("ERROR!! ReturnTags is not happy")
@@ -78,11 +79,52 @@ class MainServer(asyncio.Protocol):
         try:
             self.cur.execute("INSERT INTO `passby`.`user_tags` (`mac`, `tag`) VALUES ( %s, %s)",(self.mac,tag,))
             self.conn.commit()
-            print("Tag {}-{} added".format(self.mac,tag));
+            print("Tag '{}-{}' added".format(self.mac,tag));
             return succ_msg.encode()
         except pymysql.err.IntegrityError as e:
             print("AddTag Failed!! DB error {}".format(e));
             return fail_msg.encode()
+
+    def UserTags(self):
+        fail_msg={'type':'usertags_response','success':'false'}
+        succ_response={'type':'usertags_response','success':'true'}
+        try:
+            self.cur.execute("SELECT * FROM `user_tags` WHERE `mac`= %s",self.mac)
+            result=self.cur.fetchall()
+            if result == None:
+                succ_response['tags']=[]
+                print("'{}' user tags has nothing".format(self.mac))
+                return json.dumps(succ_response).encode()
+            else:
+                succ_response['tags']=result
+                print("'{}' user tags retrieved".format(self.mac))
+                return json.dumps(succ_response).encode()
+
+        except:
+            print("ERROR!! UserTags is not happy")
+            return fail_msg.encode()
+
+
+    def matchTag(self,target_mac):
+        try:
+            fail_msg={'type':'matchtag_response','success':'false'}
+            succ_response={'type':'matchtag_response','success':'true','target':target_mac}
+            self.cur.execute("SELECT COUNT(*) FROM ( SELECT A.mac as A_mac,A.tag as A_tag , B.mac as B_mac, B.tag as B_tag FROM `user_tags` as A,`user_tags` as B WHERE A.mac= %s and B.mac= %s HAVING A.tag = B.tag )T",(self.mac,target_mac,))
+            matches=self.cur.fetchone()
+            self.cur.execute("SELECT A_tag FROM ( SELECT A.mac as A_mac,A.tag as A_tag , B.mac as B_mac, B.tag as B_tag FROM `user_tags` as A,`user_tags` as B WHERE A.mac=%s and B.mac=%s HAVING A.tag = B.tag )T",(self.mac,target_mac,))
+            matched_tags=self.cur.fetchall()
+            if matches[0] >= 1:
+                print("'{}' and '{}' matched {} tags".format(self.mac,target_mac,matches[0]))
+                succ_response['matches']=matches[0]
+                succ_response['tags']=matched_tags
+                return json.dumps(succ_response).encode()
+            else:
+                return json.dumps(fail_msg).encode()
+        except:
+            print("ERROR!! matchTag is not happy")
+            return fail_msg.encode()
+
+
 
     #parse the input request
     def inputHandler(self,json_request):
@@ -110,6 +152,10 @@ class MainServer(asyncio.Protocol):
                 return self.ReturnTags()
             elif request['type'] == 'addtag':
                 return self.AddTag(request['tag'])
+            elif request['type'] == 'usertags':
+                return self.UserTags()
+            elif request['type'] == 'matchtag':
+                return self.matchTag(request['target'])
             else:
                 print("ERROR!! unknow request {}".format(request['type']))
                 return fail_msg.encode()

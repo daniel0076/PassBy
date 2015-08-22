@@ -41,7 +41,7 @@ class MainServer(asyncio.Protocol):
             print("user '{}' register succeed".format(request.get('BT_Addr')))
             return succ_msg.encode()
         except pymysql.err.IntegrityError as e:
-            print("DB Error!! {}".format(e));
+            print("Register Failed!! DB error {}".format(e));
             return fail_msg.encode()
         except :
             print("user '{}' register failed".format(request.get('BT_Addr')))
@@ -59,10 +59,35 @@ class MainServer(asyncio.Protocol):
         response=json.dumps(response)
         return response.encode()
 
+    def ReturnTags(self):
+        fail_msg=json.dumps({'type':'tags_response','success':'false'})
+        succ_response={'type':'tags_response','success':'true'}
+        try:
+            self.cur.execute("SELECT * FROM `tags` ORDER BY `class` ASC")
+            result=self.cur.fetchall()
+            succ_response['tags']=result
+            succ_response=json.dumps(succ_response)
+            return succ_response.encode()
+        except:
+            print("ERROR!! ReturnTags is not happy")
+            return fail_msg.encode()
+
+    def AddTag(self,tag):
+        fail_msg=json.dumps({'type':'addtag_response','success':'false'})
+        succ_msg=json.dumps({'type':'addtag_response','success':'true'})
+        try:
+            self.cur.execute("INSERT INTO `passby`.`user_tags` (`mac`, `tag`) VALUES ( %s, %s)",(self.mac,tag,))
+            self.conn.commit()
+            print("Tag {}-{} added".format(self.mac,tag));
+            return succ_msg.encode()
+        except pymysql.err.IntegrityError as e:
+            print("AddTag Failed!! DB error {}".format(e));
+            return fail_msg.encode()
+
     #parse the input request
     def inputHandler(self,json_request):
-        fail_msg=json.dumps({'type':'input','success':'false'})
-        reparse_msg=json.dumps({'type':'input','success':'reparse'})
+        fail_msg=json.dumps({'type':'input_response','success':'false'})
+        reparse_msg=json.dumps({'type':'input_response','success':'reparse'})
         try:
             request=json.loads(json_request)
         except:
@@ -81,11 +106,15 @@ class MainServer(asyncio.Protocol):
                 return self.Register(request)
             elif request['type'] == 'query':
                 return self.Query(request['mac'])
+            elif request['type'] == 'tags':
+                return self.ReturnTags()
+            elif request['type'] == 'addtag':
+                return self.AddTag(request['tag'])
             else:
                 print("ERROR!! unknow request {}".format(request['type']))
                 return fail_msg.encode()
-        except:
-                print("ERROR!! request {} parse failed".format(request))
+        except KeyError as e:
+                print("ERROR!! index '{}' not found".format(e))
                 return fail_msg.encode()
 
 

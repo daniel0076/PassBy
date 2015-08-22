@@ -38,7 +38,8 @@ class MainServer(asyncio.Protocol):
             self.cur.execute("INSERT INTO `users` (BT_Addr,name,identity,fb,line_id,ig,twitter) VALUES (%s,%s,%s,%s,%s,%s,%s)",(request.get('BT_Addr'),request.get('name'),request.get('identity'),request.get('fb'),request.get('line_id'),request.get('ig'),request.get('twitter'),))
             #need to commit the db
             self.conn.commit()
-            print("user '{}' register succeed".format(request.get('BT_Addr')))
+            adf;j
+            rint("user '{}' register succeed".format(request.get('BT_Addr')))
             return succ_msg.encode()
         except pymysql.err.IntegrityError as e:
             print("Register Failed!! DB error {}".format(e));
@@ -144,7 +145,6 @@ class MainServer(asyncio.Protocol):
                 succ_response['matches']=matches[0]
                 succ_response['tags']=tags_list
                 succ_response['name']=name
-                print(succ_response)
                 return json.dumps(succ_response).encode()
             else:
                 print("'{}' and '{}' match error".format(self.mac,target_mac))
@@ -164,10 +164,11 @@ class MainServer(asyncio.Protocol):
         except:
             print("WARNING!! input {} parse error, reparse".format(json_request))
             splited=json_request.split('\n')[:-1]
-            print(splited)
             for item in splited:
                 print("{} reparsed".format(item))
-                self.inputHandler(item)
+                res=(self.inputHandler(item))
+                print("reparse send",res)
+                self.transport.write(res)
             return reparse_msg.encode()
 
         try:
@@ -203,6 +204,8 @@ class MainServer(asyncio.Protocol):
     def connection_lost(self,exc):
         print('Close the client socket')
         self.transport.close()
+    def send(self,data):
+        self.transport.write(data)
 
     def data_received(self, data):
         try:

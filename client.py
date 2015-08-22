@@ -5,7 +5,7 @@ addr=('140.113.27.54',8888)
 
 conn={'type':'conn','mac':'test'}
 query={'type':'query','mac':'test9'}
-reg={'type':'register','BT_Addr':'test2','identity':'user','fb':'fb11','line_id':'0098','ig':'gg','twitter':'tei','name':'gg'}
+reg={'type':'register','BT_Addr':'test5','identity':'user','fb':'fb11','line_id':'0098','ig':'gg','twitter':'tei','name':'gg'}
 
 tests={'conn':conn,'query':query,'reg':reg}
 

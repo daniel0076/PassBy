@@ -49,13 +49,15 @@ class MainServer(asyncio.Protocol):
 
     #query user data, return all data from the db
     def Query(self,BT_Addr):
+        succ_response={'type':'query_response','success':'true'}
         self.cur.execute("SELECT * FROM `users` WHERE `BT_Addr`=%s",(BT_Addr,))
         result=self.cur.fetchone()
         if result is None:
             response={'type':'query_response','success':'false'}
             print("user '{}' not found".format(BT_Addr))
         else:
-            response=result
+            succ_response['query']=result
+            response=succ_response
         response=json.dumps(response)
         return response.encode()
 
@@ -85,6 +87,7 @@ class MainServer(asyncio.Protocol):
             print("AddTag Failed!! DB error {}".format(e));
             return fail_msg.encode()
 
+# 看自己的tag
     def UserTags(self):
         fail_msg={'type':'usertags_response','success':'false'}
         succ_response={'type':'usertags_response','success':'true'}
@@ -104,6 +107,24 @@ class MainServer(asyncio.Protocol):
             print("ERROR!! UserTags is not happy")
             return fail_msg.encode()
 
+    def SearchTag(self,target_mac):
+        fail_msg={'type':'searchtag_response','success':'false'}
+        succ_response={'type':'searchtag_response','success':'true','target':target_mac}
+        try:
+            self.cur.execute("SELECT * FROM `user_tags` WHERE `mac`= %s",target_mac)
+            result=self.cur.fetchall()
+            if result == None:
+                succ_response['tags']=[]
+                print("'{}' user tags has nothing".format(target_mac))
+                return json.dumps(succ_response).encode()
+            else:
+                succ_response['tags']=result
+                print("'{}' user tags retrieved".format(target_mac))
+                return json.dumps(succ_response).encode()
+
+        except:
+            print("ERROR!! SearchTag is not happy")
+            return fail_msg.encode()
 
     def matchTag(self,target_mac):
         try:
@@ -113,12 +134,20 @@ class MainServer(asyncio.Protocol):
             matches=self.cur.fetchone()
             self.cur.execute("SELECT A_tag FROM ( SELECT A.mac as A_mac,A.tag as A_tag , B.mac as B_mac, B.tag as B_tag FROM `user_tags` as A,`user_tags` as B WHERE A.mac=%s and B.mac=%s HAVING A.tag = B.tag )T",(self.mac,target_mac,))
             matched_tags=self.cur.fetchall()
+            tags_list=[]
+            for tag in matched_tags:
+                tags_list.append(tag[0])
             if matches[0] >= 1:
+                self.cur.execute("SELECT name FROM users WHERE BT_ADDR = %s",(target_mac,))
+                name=self.cur.fetchone()[0]
                 print("'{}' and '{}' matched {} tags".format(self.mac,target_mac,matches[0]))
                 succ_response['matches']=matches[0]
-                succ_response['tags']=matched_tags
+                succ_response['tags']=tags_list
+                succ_response['name']=name
+                print(succ_response)
                 return json.dumps(succ_response).encode()
             else:
+                print("'{}' and '{}' match error".format(self.mac,target_mac))
                 return json.dumps(fail_msg).encode()
         except:
             print("ERROR!! matchTag is not happy")
@@ -156,6 +185,8 @@ class MainServer(asyncio.Protocol):
                 return self.UserTags()
             elif request['type'] == 'matchtag':
                 return self.matchTag(request['target'])
+            elif request['type'] == 'searchtags':
+                return self.SearchTag(request['target'])
             else:
                 print("ERROR!! unknow request {}".format(request['type']))
                 return fail_msg.encode()

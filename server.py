@@ -10,7 +10,7 @@ class MainServer(asyncio.Protocol):
         asyncio.Protocol.__init__(self)
         self.mac=""
         try:
-            self.conn = pymysql.connect(unix_socket="/run/mysqld/mysqld.sock", user='passby', passwd='howbangbang', db='passby')
+            self.conn = pymysql.connect(unix_socket="/run/mysqld/mysqld.sock", user='passby', passwd='howbangbang1', db='passby')
             self.cur = self.conn.cursor()
         except :
             print("Fatal Error!! Cannot connect to database")
@@ -28,7 +28,7 @@ class MainServer(asyncio.Protocol):
             self.mac=BT_Addr
             print("user '{}' connected successfully".format(self.mac))
         response=json.dumps(response)
-        return response.encode()
+        return response
 
     #user register
     def Register(self,request):
@@ -40,13 +40,13 @@ class MainServer(asyncio.Protocol):
             self.conn.commit()
             adf;j
             rint("user '{}' register succeed".format(request.get('BT_Addr')))
-            return succ_msg.encode()
+            return succ_msg
         except pymysql.err.IntegrityError as e:
             print("Register Failed!! DB error {}".format(e));
-            return fail_msg.encode()
+            return fail_msg
         except :
             print("user '{}' register failed".format(request.get('BT_Addr')))
-            return fail_msg.encode()
+            return fail_msg
 
     #query user data, return all data from the db
     def Query(self,BT_Addr):
@@ -57,10 +57,13 @@ class MainServer(asyncio.Protocol):
             response={'type':'query_response','success':'false'}
             print("user '{}' not found".format(BT_Addr))
         else:
+            tag_list=self.SearchTag(BT_Addr)
             succ_response['query']=result
+            succ_response['tags']=tag_list
             response=succ_response
         response=json.dumps(response)
-        return response.encode()
+        print("response ",response)
+        return response
 
     def ReturnTags(self):
         fail_msg=json.dumps({'type':'tags_response','success':'false'})
@@ -71,10 +74,10 @@ class MainServer(asyncio.Protocol):
             succ_response['tags']=result
             succ_response=json.dumps(succ_response)
             print("Tags retrieved")
-            return succ_response.encode()
+            return succ_response
         except:
             print("ERROR!! ReturnTags is not happy")
-            return fail_msg.encode()
+            return fail_msg
 
     def AddTag(self,tag):
         fail_msg=json.dumps({'type':'addtag_response','success':'false'})
@@ -83,10 +86,10 @@ class MainServer(asyncio.Protocol):
             self.cur.execute("INSERT INTO `passby`.`user_tags` (`mac`, `tag`) VALUES ( %s, %s)",(self.mac,tag,))
             self.conn.commit()
             print("Tag '{}-{}' added".format(self.mac,tag));
-            return succ_msg.encode()
+            return succ_msg
         except pymysql.err.IntegrityError as e:
             print("AddTag Failed!! DB error {}".format(e));
-            return fail_msg.encode()
+            return fail_msg
 
 # 看自己的tag
     def UserTags(self):
@@ -98,34 +101,33 @@ class MainServer(asyncio.Protocol):
             if result == None:
                 succ_response['tags']=[]
                 print("'{}' user tags has nothing".format(self.mac))
-                return json.dumps(succ_response).encode()
+                return json.dumps(succ_response)
             else:
                 succ_response['tags']=result
                 print("'{}' user tags retrieved".format(self.mac))
-                return json.dumps(succ_response).encode()
+                return json.dumps(succ_response)
 
         except:
             print("ERROR!! UserTags is not happy")
-            return fail_msg.encode()
+            return fail_msg
 
     def SearchTag(self,target_mac):
-        fail_msg={'type':'searchtag_response','success':'false'}
-        succ_response={'type':'searchtag_response','success':'true','target':target_mac}
         try:
             self.cur.execute("SELECT * FROM `user_tags` WHERE `mac`= %s",target_mac)
             result=self.cur.fetchall()
             if result == None:
                 succ_response['tags']=[]
                 print("'{}' user tags has nothing".format(target_mac))
-                return json.dumps(succ_response).encode()
+                return []
             else:
-                succ_response['tags']=result
-                print("'{}' user tags retrieved".format(target_mac))
-                return json.dumps(succ_response).encode()
+                tag_list=[]
+                for t in result:
+                    tag_list.append(t[1])
+                return tag_list
 
         except:
             print("ERROR!! SearchTag is not happy")
-            return fail_msg.encode()
+            return fail_msg
 
     def matchTag(self,target_mac):
         try:
@@ -145,13 +147,13 @@ class MainServer(asyncio.Protocol):
                 succ_response['matches']=matches[0]
                 succ_response['tags']=tags_list
                 succ_response['name']=name
-                return json.dumps(succ_response).encode()
+                return json.dumps(succ_response)
             else:
                 print("'{}' and '{}' match error".format(self.mac,target_mac))
-                return json.dumps(fail_msg).encode()
+                return json.dumps(fail_msg)
         except:
             print("ERROR!! matchTag is not happy")
-            return fail_msg.encode()
+            return fail_msg
 
 
 
@@ -167,9 +169,8 @@ class MainServer(asyncio.Protocol):
             for item in splited:
                 print("{} reparsed".format(item))
                 res=(self.inputHandler(item))
-                print("reparse send",res)
-                self.transport.write(res)
-            return reparse_msg.encode()
+                self.send(res)
+            return reparse_msg
 
         try:
             if request['type'] == 'conn':
@@ -190,11 +191,10 @@ class MainServer(asyncio.Protocol):
                 return self.SearchTag(request['target'])
             else:
                 print("ERROR!! unknow request {}".format(request['type']))
-                return fail_msg.encode()
+                return fail_msg
         except KeyError as e:
                 print("ERROR!! index '{}' not found".format(e))
-                return fail_msg.encode()
-
+                return fail_msg
 
     def connection_made(self, transport):
         peername = transport.get_extra_info('peername')
@@ -204,15 +204,17 @@ class MainServer(asyncio.Protocol):
     def connection_lost(self,exc):
         print('Close the client socket')
         self.transport.close()
-    def send(self,data):
-        self.transport.write(data)
+    def send(self,res):
+        res="{}\n".format(res)
+        self.transport.write(res.encode())
 
     def data_received(self, data):
         try:
             message = data.decode()
             print('Data received: {!r}'.format(message))
             res=self.inputHandler(message)
-            self.transport.write(res)
+            res="{}\n".format(res)
+            self.transport.write(res.encode())
         except UnicodeDecodeError:
             self.transport.close()
 

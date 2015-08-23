@@ -3,14 +3,16 @@ import json
 
 addr=('140.113.27.54',8888)
 
-conn={'type':'conn','mac':'test'}
-query={'type':'query','mac':'test9'}
-reg={'type':'register','BT_Addr':'test5','identity':'user','fb':'fb11','line_id':'0098','ig':'gg','twitter':'tei','name':'gg'}
+conn={'type':'conn','mac':'test3'}
+query={'type':'query','mac':'Me'}
+reg={'type':'register','BT_Addr':'test1','identity':'user','fb':'fb11','line_id':'0098','ig':'gg','twitter':'tei','name':'gg'}
 tags={'type':'tags'}
 addtag={'type':'addtag','tag':'tennis'}
 usertags={'type':'usertags'}
+matchtag={'type':'matchtag','target':'test'}
+searchtags={'type':'searchtags','target':'test'}
 
-tests={'tags':tags,'query':query,'reg':reg,'addtag':addtag,'usertags':usertags}
+tests={'tags':tags,'query':query,'usertags':usertags,'matchtag':matchtag}
 
 sock=socket.socket()
 sock.connect(addr)

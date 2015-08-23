@@ -1,0 +1,69 @@
+{
+    "cordova-plugin-whitelist": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-whitelist@1"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "com.megster.cordova.ble": {
+        "source": {
+            "type": "registry",
+            "id": "com.megster.cordova.ble"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cz.blocshop.socketsforcordova": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/blocshop/sockets-for-cordova",
+            "subdir": "."
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "com.tlantic.plugins.socket": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/Tlantic/cdv-socket-plugin.git",
+            "subdir": "."
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-dialogs": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-dialogs"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "com.badrit.MacAddress": {
+        "source": {
+            "type": "git",
+            "url": "https://github.com/mohamed-salah/MacAddressPlugin.git",
+            "subdir": "."
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "cordova-plugin-device": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-device"
+        },
+        "is_top_level": true,
+        "variables": {}
+    },
+    "com.megster.cordova.bluetoothserial": {
+        "source": {
+            "type": "registry",
+            "id": "com.megster.cordova.bluetoothserial"
+        },
+        "is_top_level": true,
+        "variables": {}
+    }
+}

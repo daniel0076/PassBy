@@ -1,0 +1,101 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {
+            "res/xml/config.xml": {
+                "parents": {
+                    "/*": [
+                        {
+                            "xml": "<feature name=\"MacAddressPlugin\"><param name=\"android-package\" value=\"com.badrit.MacAddress.MacAddressPlugin\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Socket\"><param name=\"android-package\" value=\"com.tlantic.plugins.socket.SocketPlugin\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Device\"><param name=\"android-package\" value=\"org.apache.cordova.device.Device\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Notification\"><param name=\"android-package\" value=\"org.apache.cordova.dialogs.Notification\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Whitelist\"><param name=\"android-package\" value=\"org.apache.cordova.whitelist.WhitelistPlugin\" /><param name=\"onload\" value=\"true\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"SocketsForCordova\"><param name=\"android-package\" value=\"cz.blocshop.socketsforcordova.SocketPlugin\" /></feature>",
+                            "count": 1
+                        }
+                    ],
+                    "/widget": [
+                        {
+                            "xml": "<feature name=\"BLE\"><param name=\"android-package\" value=\"com.megster.cordova.ble.central.BLECentralPlugin\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"BluetoothSerial\"><param name=\"android-package\" value=\"com.megster.cordova.BluetoothSerial\" /></feature>",
+                            "count": 1
+                        }
+                    ]
+                }
+            },
+            "AndroidManifest.xml": {
+                "parents": {
+                    "/*": [
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.ACCESS_WIFI_STATE\" />",
+                            "count": 1
+                        }
+                    ],
+                    "/manifest": [
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.BLUETOOTH\" />",
+                            "count": 2
+                        },
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.BLUETOOTH_ADMIN\" />",
+                            "count": 2
+                        },
+                        {
+                            "xml": "<uses-permission android:name=\"android.permission.INTERNET\" />",
+                            "count": 2
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "installed_plugins": {
+        "com.badrit.MacAddress": {
+            "PACKAGE_NAME": "nctucs.passby"
+        },
+        "com.megster.cordova.ble": {
+            "PACKAGE_NAME": "nctucs.passby"
+        },
+        "com.tlantic.plugins.socket": {
+            "PACKAGE_NAME": "nctucs.passby"
+        },
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "nctucs.passby"
+        },
+        "cordova-plugin-dialogs": {
+            "PACKAGE_NAME": "nctucs.passby"
+        },
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "nctucs.passby"
+        },
+        "cz.blocshop.socketsforcordova": {
+            "PACKAGE_NAME": "nctucs.passby"
+        },
+        "com.megster.cordova.bluetoothserial": {
+            "PACKAGE_NAME": "nctucs.passby"
+        }
+    },
+    "dependent_plugins": {}
+}

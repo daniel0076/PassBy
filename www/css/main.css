@@ -1,0 +1,167 @@
+.initpage{
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    background-color: #EDFAFF;
+}
+
+.initpage-btn{
+    position: absolute;
+    width: 30%;
+    left:35%; top: 50%; bottom: 0; right: 0;
+    margin: 0;
+}
+
+.initpage-logo{
+    position: absolute;
+    width: 100%;
+    left:0; top:5%; bottom: 0; right: 0;
+    margin: 0;
+}
+
+.startpage{
+    display: none;
+    width: 100%;
+    height: 100%;
+    margin: 0%;
+    background-image: url('../img/Background.jpg'); 
+    background-size: 100%;
+}
+
+.mainpage{
+    width: 100%;
+    height: 100%;
+    margin: 0%;
+    display: none;
+
+}
+
+.mainpage-bg{
+    position: relative;
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0.5;
+}
+
+.cardpage{
+    display: none;
+}
+
+
+
+.stargepage-btn{
+    position: absolute;
+    width: 100%;
+    top: 50%; bottom: 0; left: 0; right:0;
+    margin: 0;
+
+}
+
+.item-img{
+    position: relative;
+    height: 95%;
+    top: 2.5%; bottom: 0; left: 10px; right:0;
+    margin: 0;
+}
+
+
+.tagpage{
+  display:none;
+}
+
+.item-img-footer{
+    position: relative;
+    float: right;
+    height: 30%;
+    margin-top: 10%
+   
+}
+
+
+.item-inside{
+    position: absolute;
+    line-height: 1.5em;
+    margin-top: 10%;
+    margin-left: 5%;
+    height: 3em;       /* height is 2x line-height, so two lines will display */
+      /* prevents extra lines from being visible */
+}
+
+.item-footer{
+    position: relative;
+    width: 50%;
+    height: 100%;
+    left: 50%; top:0;
+    margin: 0%;
+}
+
+.item-arrow{
+    position: relative;
+    height: 30%;
+    float: right;
+    left:0; top:35%; right:0; bottom: 0;
+    margin:0;
+    vertical-align: center;
+}
+
+.hh1{
+  font-size: 7vw;
+}
+
+.hh3{
+  font-size: 3vw;
+}
+
+.item-name{
+   position: relative;
+   font-size: 200%;
+   height: 100%;
+}
+
+.item-row{
+    height: 18%;
+
+}
+
+.mainpage-container{
+	position: absolute !important;
+    width: 86%;
+    height: 90%;
+    top: 3%; bottom: 0; left:7%; right:0;
+    margin: 0;
+    opacity: 1;
+    float: left;
+    overflow-y:auto;
+}
+
+.
+ body {
+    background-color: #F8FFFE;
+  }
+  .ui.menu .item img.logo {
+    margin-right: 1.5em;
+  }
+  .main.container {
+    margin-top: 10em;
+  }
+
+
+.itempic{
+    position: absolute;
+    height: 80%;
+    top: 10%; bottom:10%; left: 5%; right:0;
+    margin: 0;
+    z-index: 300;
+
+}
+
+.tag{
+    opacity: 0.6;
+
+
+}
+
+
+

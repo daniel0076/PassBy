@@ -1,0 +1,89 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {
+            "framework": {
+                "parents": {
+                    "CoreBluetooth.framework": [
+                        {
+                            "xml": false,
+                            "count": 2
+                        }
+                    ],
+                    "AudioToolbox.framework": [
+                        {
+                            "xml": true,
+                            "count": 1
+                        }
+                    ]
+                }
+            },
+            "config.xml": {
+                "parents": {
+                    "/widget": [
+                        {
+                            "xml": "<feature name=\"BLE\"><param name=\"ios-package\" onload=\"true\" value=\"BLECentralPlugin\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"BluetoothSerial\"><param name=\"ios-package\" onload=\"true\" value=\"MEGBluetoothSerial\" /></feature>",
+                            "count": 1
+                        }
+                    ],
+                    "/*": [
+                        {
+                            "xml": "<feature name=\"SocketsForCordova\"><param name=\"ios-package\" value=\"SocketPlugin\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Socket\"><param name=\"ios-package\" value=\"CDVSocketPlugin\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Notification\"><param name=\"ios-package\" value=\"CDVNotification\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"MacAddressPlugin\"><param name=\"ios-package\" value=\"MacAddressPlugin\" /></feature>",
+                            "count": 1
+                        },
+                        {
+                            "xml": "<feature name=\"Device\"><param name=\"ios-package\" value=\"CDVDevice\" /></feature>",
+                            "count": 1
+                        }
+                    ]
+                }
+            }
+        }
+    },
+    "installed_plugins": {
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "nctucs.passby"
+        },
+        "com.megster.cordova.ble": {
+            "PACKAGE_NAME": "nctucs.passby"
+        },
+        "cz.blocshop.socketsforcordova": {
+            "PACKAGE_NAME": "nctucs.passby"
+        },
+        "com.tlantic.plugins.socket": {
+            "PACKAGE_NAME": "nctucs.passby"
+        },
+        "cordova-plugin-dialogs": {
+            "PACKAGE_NAME": "nctucs.passby"
+        },
+        "com.badrit.MacAddress": {
+            "PACKAGE_NAME": "nctucs.passby"
+        },
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "nctucs.passby"
+        },
+        "com.megster.cordova.bluetoothserial": {
+            "PACKAGE_NAME": "nctucs.passby"
+        }
+    },
+    "dependent_plugins": {}
+}
